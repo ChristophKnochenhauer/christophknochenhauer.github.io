@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Stochastic Models and Control Workshop 2026</title>
+  <style>
+    :root {
+      --tum-blue: #3070B3;
+      --tum-blue-dark: #072140;
+      --tum-blue-light: #E3EEFA;
+      --tum-grey-1: #20252A;
+      --tum-grey-3: #475058;
+      --tum-grey-8: #EBECEF;
+      --tum-grey-9: #FBF9FA;
+      --tum-yellow: #FED702;
+      --tum-orange: #F7811E;
+      --white: #FFFFFF;
+
+      --bg-page: var(--tum-grey-9);
+      --bg-card: var(--white);
+      --border-soft: #DDE2E6;
+      --text-main: var(--tum-grey-1);
+      --text-muted: var(--tum-grey-3);
+      --accent: var(--tum-blue);
+      --accent-soft: var(--tum-blue-light);
+      --accent-warm: var(--tum-yellow);
+
+      --font-serif: "Georgia", "Times New Roman", serif;
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+      --radius-lg: 14px;
+      --radius-pill: 999px;
+      --shadow-soft: 0 10px 22px rgba(7, 33, 64, 0.08);
+      --transition-fast: 0.18s ease-out;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font-sans);
+      background: var(--bg-page);
+      color: var(--text-main);
+      line-height: 1.6;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    .site-header {
+      background: rgba(255,255,255,0.96);
+      border-bottom: 1px solid var(--border-soft);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.8rem 0;
+      gap: 1rem;
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 4px;
+      border: 2px solid var(--accent);
+      background: var(--white);
+    }
+
+    .brand-text {
+      font-family: var(--font-serif);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      color: var(--tum-blue-dark);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 1.4rem;
+      font-size: 0.9rem;
+    }
+
+    .nav-links a {
+      position: relative;
+      color: var(--text-muted);
+      padding-bottom: 0.2rem;
+    }
+
+    .nav-links a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 0;
+      height: 2px;
+      background: var(--accent);
+      transition: width var(--transition-fast);
+    }
+
+    .nav-links a:hover {
+      color: var(--tum-blue-dark);
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+    }
+
+    .badge-date {
+      padding: 0.25rem 0.7rem;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-soft);
+      background: var(--tum-grey-9);
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.45rem 1.1rem;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: var(--white);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+    }
+
+    .btn-primary:hover {
+      background: var(--tum-blue-dark);
+      box-shadow: 0 6px 14px rgba(48, 112, 179, 0.25);
+      transform: translateY(-1px);
+      text-decoration: none;
+    }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.45rem 1rem;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-soft);
+      background: var(--white);
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--tum-blue-dark);
+      background: var(--accent-soft);
+      text-decoration: none;
+    }
+
+    .header-banner {
+      width: 100%;
+      background: var(--tum-grey-8);
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .banner-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0;
+    }
+
+    .banner-image {
+      width: 100%;
+      height: clamp(220px, 40vh, 320px);
+      background-image: url("banner.jpg");
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+
+    .banner-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, rgba(7,33,64,0.55), rgba(7,33,64,0.1));
+    }
+
+    .banner-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      padding: 0 1.5rem;
+    }
+
+    .banner-text-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      color: var(--white);
+    }
+
+    .banner-kicker {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      opacity: 0.9;
+    }
+
+    .banner-title {
+      font-family: var(--font-serif);
+      font-size: clamp(1.9rem, 3vw, 2.4rem);
+      margin: 0.4rem 0 0.3rem;
+    }
+
+    .banner-sub {
+      font-size: 0.95rem;
+      max-width: 30rem;
+      opacity: 0.95;
+    }
+
+    main {
+      padding: 2.5rem 0 3rem;
+    }
+
+    section {
+      padding: 2.25rem 0;
+    }
+
+    .section-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .section-kicker {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .section-title {
+      margin: 0;
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      color: var(--tum-blue-dark);
+    }
+
+    .section-sub {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-top: 0.4rem;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-soft);
+      box-shadow: var(--shadow-soft);
+      padding: 1.4rem 1.5rem;
+    }
+
+    .intro-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+      gap: 1.8rem;
+    }
+
+    .lead-paragraph {
+      font-size: 1rem;
+      color: var(--tum-grey-1);
+      margin-top: 0;
+      margin-bottom: 0.8rem;
+    }
+
+    .body-text {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin-top: 0;
+      margin-bottom: 0.7rem;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      margin-top: 0.4rem;
+    }
+
+    .tag {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border-soft);
+      background: var(--tum-grey-9);
+      color: var(--text-muted);
+    }
+
+    .fact-list {
+      display: grid;
+      gap: 0.6rem;
+      font-size: 0.9rem;
+    }
+
+    .fact-item {
+      padding: 0.6rem 0.7rem;
+      border-radius: 10px;
+      background: #f7f8fb;
+      border: 1px solid var(--border-soft);
+    }
+
+    .fact-label {
+      display: block;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+    }
+
+    .fact-value {
+      font-weight: 500;
+      margin-top: 0.1rem;
+    }
+
+    .program-card {
+      margin-bottom: 1.5rem;
+    }
+
+    .program-day-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin: 0 0 0.6rem;
+      color: var(--tum-blue-dark);
+    }
+
+    .program-list {
+      display: grid;
+      gap: 0.65rem;
+      font-size: 0.9rem;
+    }
+
+    .slot {
+      display: grid;
+      grid-template-columns: 90px minmax(0, 1fr);
+      gap: 0.9rem;
+      padding: 0.55rem 0.7rem;
+      border-radius: 10px;
+      border: 1px solid var(--border-soft);
+      background: var(--white);
+    }
+
+    .slot-time {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      padding-top: 0.15rem;
+    }
+
+    .slot-main {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+    }
+
+    .slot-title {
+      font-weight: 500;
+    }
+
+    .speakers {
+      display: grid;
+      grid-template-columns: 200px minmax(0, 1fr);
+      gap: 0.9rem;
+      padding: 0.55rem 0.7rem;
+      border-radius: 10px;
+      border: 1px solid var(--border-soft);
+      background: var(--white);
+    }
+
+    .speakers-main {
+      color: var(--text-muted);
+      padding-top: 0.15rem;
+    }
+
+    .speakers-name {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      font-weight: 500;
+    }
+
+    .speakers-affil {
+      padding-top: 0.25rem;
+      font-size: 0.8rem;
+    }
+
+    .slot-speaker {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .speaker-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 1rem;
+    }
+
+    .speaker-card {
+      padding: 1rem;
+      border-radius: 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-soft);
+    }
+
+    .speaker-name {
+      font-weight: 600;
+      margin-bottom: 0.15rem;
+    }
+
+    .speaker-affil {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+
+    .speaker-text {
+      font-size: 0.9rem;
+      color: var(--text-main);
+    }
+
+    .speaker-photo {
+        width: 125px;
+        height: 125px;
+        object-fit: cover;
+        border-radius: 50%;
+        margin-bottom: 0.6rem;
+        border: 2px solid var(--border-soft);
+        background: var(--tum-grey-8);
+    }
+
+    .registration-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+      gap: 1.8rem;
+    }
+
+    form {
+      display: grid;
+      gap: 0.8rem;
+      font-size: 0.9rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.8rem;
+      margin-bottom: 0.15rem;
+      color: var(--tum-grey-1);
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 0.5rem 0.6rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-soft);
+      background: var(--white);
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      color: var(--text-main);
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(48, 112, 179, 0.24);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-row-inline {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 0.8rem;
+    }
+
+    .note-small {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.3rem;
+    }
+
+    .contact-card p {
+      margin: 0.2rem 0;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .highlight-bar {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.8rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: var(--radius-pill);
+      background: var(--accent-soft);
+      border: 1px solid var(--border-soft);
+      margin-bottom: 0.7rem;
+    }
+
+    .highlight-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-warm);
+    }
+
+    footer {
+      border-top: 1px solid var(--border-soft);
+      padding: 1.4rem 0 2rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      background: var(--white);
+    }
+
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 900px) {
+      .nav {
+        flex-wrap: wrap;
+      }
+
+      .nav-links {
+        order: 3;
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+        border-top: 1px solid var(--border-soft);
+        padding-top: 0.4rem;
+        margin-top: 0.2rem;
+      }
+
+      .intro-grid,
+      .registration-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .banner-text {
+        padding: 0 1rem;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .nav-right .badge-date {
+        display: none;
+      }
+
+      .slot {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .banner-title {
+        font-size: 1.7rem;
+      }
+
+      .form-row-inline {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="nav">
+        <div class="nav-brand">
+          <div class="brand-text">Stochastic Models & Control Workshop</div>
+        </div>
+        <nav class="nav-links">
+          <a href="#about">About</a>
+          <a href="#speakers">Speakers</a>
+          <a href="#program">Program</a>
+          <a href="#registration">Registration</a>
+        </nav>
+        <div class="nav-right">
+          <div class="badge-date">March 23-26, 2026 · Tegernsee</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="header-banner">
+    <div class="banner-inner">
+      <div class="banner-image">
+        <div class="banner-overlay"></div>
+        <div class="banner-text">
+          <div class="banner-text-inner">
+            <div class="banner-kicker">15th International Workshop on</div>
+            <h1 class="banner-title">Stochastic Models & Control</h1>
+            <p class="banner-sub">
+              March 23 to 26, 2026 - Tegernsee (near Munich)
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <section id="about">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-kicker">About the Workshop</div>
+          <h2 class="section-title">Aims and Scope</h2>
+        </div>
+        <div class="intro-grid">
+          <article class="card">
+            <p class="lead-paragraph">
+              The Workshop on Stochastic Models and Control is a well-established
+              international conference that has brought together leading researchers and
+              experts in stochastic control and optimization since 1994.
+            </p>
+            <p class="body-text">
+              Held biennially,
+              the workshop provides a forum for discussing recent theoretical advances and
+              their applications in areas such as game theory, operations research, finance,
+              and engineering.
+            </p>
+            <p class="body-text">
+              A central objective of SMC is to foster scientific exchange,
+              interdisciplinary collaboration, and the connection between fundamental
+              research and practical applications.
+            </p>
+          </article>
+          <aside>
+            <div class="fact-list">
+              <div class="fact-item">
+                <span class="fact-label">Venue</span>
+                <a href="https://caroundselig.de/en"><span class="fact-value">Caro & Selig Hotel (Tegernsee)</span></a>
+              </div>
+              <div class="fact-item">
+                <span class="fact-label">Registration</span>
+                <span class="fact-value">open until February 28, 2026</span>
+              </div>
+              <div class="fact-item">
+                <span class="fact-label">Call for Abstracts</span>
+                <span class="fact-value">open until February 28, 2026</span>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section id="speakers">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-kicker">Scientific Program</div>
+          <h2 class="section-title">Invited Speakers</h2>
+        </div>
+
+        <div class="card program-card">
+          <div class="program-list">
+
+            <div class="speakers">
+              <div class="speakers-main">
+                <div class="speakers-name">Eduardo Abi Jaber</div>
+              </div>
+              <div class="speakers-affil">Ecole Polytechnique</div>
+            </div>
+
+            <div class="speakers">
+              <div class="speakers-main">
+                <div class="speakers-name">Samuel Cohen</div>
+              </div>
+              <div class="speakers-affil">University of Oxford</div>
+            </div>
+
+            <div class="speakers">
+              <div class="speakers-main">
+                <div class="speakers-name">Christa Cuchiero</div>
+              </div>
+              <div class="speakers-affil">University of Vienna</div>
+            </div>
+
+            <div class="speakers">
+              <div class="speakers-main">
+                <div class="speakers-name">Roxana Dumitrescu</div>
+              </div>
+              <div class="speakers-affil">ENSAE Paris</div>
+            </div>
+
+            <div class="speakers">
+              <div class="speakers-main">
+                <div class="speakers-name">Michaela Hitz</div>
+              </div>
+              <div class="speakers-affil">University of Klagenfurt</div>
+            </div>
+
+            <div class="speakers">
+              <div class="speakers-main">
+                <div class="speakers-name">Anna Jaskiewicz</div>
+              </div>
+              <div class="speakers-affil">Wrocław University</div>
+            </div>
+
+            <div class="speakers">
+              <div class="speakers-main">
+                <div class="speakers-name">Sigrid Källblad</div>
+              </div>
+              <div class="speakers-affil">KTH Stockholm</div>
+            </div>
+
+            <div class="speakers">
+              <div class="speakers-main">
+                <div class="speakers-name">Johannes Muhle-Karbe</div>
+              </div>
+              <div class="speakers-affil">Imperial College London</div>
+            </div>
+
+            <div class="speakers">
+              <div class="speakers-main">
+                <div class="speakers-name">Jan Palczewski</div>
+              </div>
+              <div class="speakers-affil">Wrocław University</div>
+            </div>
+
+            <div class="speakers">
+              <div class="speakers-main">
+                <div class="speakers-name">Mete Soner</div>
+              </div>
+              <div class="speakers-affil">Princeton University</div>
+            </div>
+
+            <div class="speakers">
+              <div class="speakers-main">
+                <div class="speakers-name">Sara Svaluto-Ferro</div>
+              </div>
+              <div class="speakers-affil">University of Verona</div>
+            </div>
+
+            <div class="speakers">
+              <div class="speakers-main">
+                <div class="speakers-name">Raúl Tempone</div>
+              </div>
+              <div class="speakers-affil">King Abdullah University of Science and Technology</div>
+            </div>
+
+          </div>
+        </div>
+<!--
+        <div class="speaker-grid">
+          <article class="speaker-card">
+            <img class="speaker-photo" src="avatar_m.svg" alt="Avatar" />
+            <div class="speaker-name">Eduardo Abi Jaber</div>
+            <div class="speaker-affil">Ecole Polytechnique</div>
+            <p class="speaker-text">
+                T.B.A.
+            </p>
+          </article>
+          <article class="speaker-card">
+            <img class="speaker-photo" src="avatar_m.svg" alt="Avatar" />
+            <div class="speaker-name">Samuel Cohen</div>
+            <div class="speaker-affil">University of Oxford</div>
+            <p class="speaker-text">
+                T.B.A.
+            </p>
+          </article>
+          <article class="speaker-card">
+            <img class="speaker-photo" src="avatar_f.svg" alt="Avatar" />
+            <div class="speaker-name">Christa Cuchiero</div>
+            <div class="speaker-affil">University of Vienna</div>
+            <p class="speaker-text">
+                T.B.A.
+            </p>
+          </article>
+          <article class="speaker-card">
+            <img class="speaker-photo" src="avatar_f.svg" alt="Avatar" />
+            <div class="speaker-name">Roxana Dumitrescu</div>
+            <div class="speaker-affil">ENSAE Paris</div>
+            <p class="speaker-text">
+                T.B.A.
+            </p>
+          </article>
+          <article class="speaker-card">
+            <img class="speaker-photo" src="avatar_f.svg" alt="Avatar" />
+            <div class="speaker-name">Michaela Hitz</div>
+            <div class="speaker-affil">University of Klagenfurt</div>
+            <p class="speaker-text">
+                T.B.A.
+            </p>
+          </article>
+          <article class="speaker-card">
+            <img class="speaker-photo" src="avatar_f.svg" alt="Avatar" />
+            <div class="speaker-name">Anna Jaskiewicz</div>
+            <div class="speaker-affil">Wrocław University</div>
+            <p class="speaker-text">
+                T.B.A.
+            </p>
+          </article>
+          <article class="speaker-card">
+            <img class="speaker-photo" src="avatar_f.svg" alt="Avatar" />
+            <div class="speaker-name">Sigrid Källblad</div>
+            <div class="speaker-affil">KTH Stockholm</div>
+            <p class="speaker-text">
+                T.B.A.
+            </p>
+          </article>
+          <article class="speaker-card">
+            <img class="speaker-photo" src="avatar_m.svg" alt="Avatar" />
+            <div class="speaker-name">Johannes Muhle-Karbe</div>
+            <div class="speaker-affil">Imperial College London</div>
+            <p class="speaker-text">
+                T.B.A.
+            </p>
+          </article>
+          <article class="speaker-card">
+            <img class="speaker-photo" src="avatar_m.svg" alt="Avatar" />
+            <div class="speaker-name">Jan Palczewski</div>
+            <div class="speaker-affil">Wrocław University</div>
+            <p class="speaker-text">
+                T.B.A.
+            </p>
+          </article>
+          <article class="speaker-card">
+            <img class="speaker-photo" src="avatar_m.svg" alt="Avatar" />
+            <div class="speaker-name">Mete Soner</div>
+            <div class="speaker-affil">Princeton University</div>
+            <p class="speaker-text">
+                T.B.A.
+            </p>
+          </article>
+          <article class="speaker-card">
+            <img class="speaker-photo" src="avatar_f.svg" alt="Avatar" />
+            <div class="speaker-name">Sara Svaluto-Ferro</div>
+            <div class="speaker-affil">University of Verona</div>
+            <p class="speaker-text">
+                T.B.A.
+            </p>
+          </article>
+          <article class="speaker-card">
+            <img class="speaker-photo" src="avatar_m.svg" alt="Avatar" />
+            <div class="speaker-name">Raúl Tempone</div>
+            <div class="speaker-affil">KAUST</div>
+            <p class="speaker-text">
+                T.B.A.
+            </p>
+          </article>
+        </div>
+      </div>
+-->
+    </section>
+
+    <section id="program">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-kicker">Program</div>
+          <h2 class="section-title">Preliminary Schedule</h2>
+          <p class="section-sub">The final program will be published shortly before the start of the workshop.</p>
+        </div>
+        <div class="card program-card">
+          <div class="program-day-title">Day 0 · Monday, March 23</div>
+          <div class="program-list">
+            <div class="slot">
+              <div class="slot-time">17:30–19:00</div>
+              <div class="slot-main">
+                <div class="slot-title">Welcome Reception</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card program-card">
+          <div class="program-day-title">Day 1 · Tuesday, March 24</div>
+          <div class="program-list">
+            <div class="slot">
+              <div class="slot-time">09:00–18:00</div>
+              <div class="slot-main">
+                <div class="slot-title">Invited and Contributed Talks</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card program-card">
+          <div class="program-day-title">Day 2 · Wednesday, March 25</div>
+          <div class="program-list">
+            <div class="slot">
+              <div class="slot-time">09:00–12:00</div>
+              <div class="slot-main">
+                <div class="slot-title">Invited and Contributed Talks</div>
+              </div>
+            </div>
+            <div class="slot">
+              <div class="slot-time">14:00–17:00</div>
+              <div class="slot-main">
+                <div class="slot-title">Social Event</div>
+                <div class="slot-speaker">Guided Brewery Tour and Visit to Schliersee</div>
+              </div>
+            </div>
+            <div class="slot">
+              <div class="slot-time">18:00–21:00</div>
+              <div class="slot-main">
+                <div class="slot-title">Workshop Dinner</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card program-card">
+          <div class="program-day-title">Day 3 · Thursday, March 26</div>
+          <div class="program-list">
+            <div class="slot">
+              <div class="slot-time">09:00–18:00</div>
+              <div class="slot-main">
+                <div class="slot-title">Invited and Contributed Talks</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="registration">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-kicker">Registration Form</div>
+          <h2 class="section-title">Registration and Abstract Submission</h2>
+          <p class="section-sub">Deadline for Registration and Abstract Submission: February 28, 2026</p>
+        </div>
+        <div>
+          <div class="card">
+            <!--
+            <div class="body-text">
+              Registration and Abstract Submission can be done via the following link:
+              <a href="https://collab.dvb.bayern/spaces/TUMcitforms/pages/2241470891/Stochastic+Models+and+Control+2026">Registration Form</a>.
+            </div>
+            -->
+            <div class="body-text">
+              Registration will open shortly.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+    <section id="contact">
+      <div class="container">
+        <div class="section-header">
+          <div class="section-kicker">Organizing Committee</div>
+          <h2 class="section-title">Contact</h2>
+          <p class="section-sub">
+            In case you have any questions, please contact the local organizers via
+            <a href="mailto:bettina.haas@tum.de">bettina.haas@tum.de</a>
+          </p>
+        </div>
+        <div>
+          <div class="card program-card">
+            <div class="body-text">
+              <p class="program-day-title">Local Organizers:</p>
+              <p>Christoph Knochenhauer (TUM)</p>
+              <p>Bettina Haas (TUM)</p>
+            </div>
+          </div>
+          <div class="card program-card">
+            <div class="body-text">
+              <p class="program-day-title">Program Committee:</p>
+              <p>Nicole Bäuerle (Karlsruhe Institute of Technology)</p>
+              <p>Sören Christensen (University of Kiel)</p>
+              <p>Jörn Sass (RPTU Kaiserslautern-Landau)</p>
+              <p>Stefan Thonhauser (Graz University of Technology)</p>
+              <p>Ralf Wunderlich (Brandenburg University of Technology Cottbus-Senftenberg)</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div>© 2026 Stochastic Models and Control Workshop</div>
+        <div class="footer-links">
+          <a href="https://stochasticcontrol.org/legal-notice/">Legal Notice</a>
+          <a href="https://stochasticcontrol.org/privacy-policy/">Privacy Policy</a>
+          <a href="#top">back to top</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
